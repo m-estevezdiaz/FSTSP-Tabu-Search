@@ -14,19 +14,18 @@ The algorithm coordinates a truck and a drone to serve a set of customers, aimin
 - `matplotlib`
 
 You can install the dependency with:
-
 ```bash
-pip install matplotlib
+  pip install matplotlib
+```
+
 How to run
 Navigate to the project directory:
-
-bash
-Copiar código
-cd "COURSE PROJECT"
+````bash
+  cd "COURSE PROJECT"
+````
 Make sure the following directory structure is available:
 
-nginx
-Copiar código
+````nginx
 COURSE PROJECT/
 │
 ├── tabu_search.py
@@ -35,39 +34,29 @@ COURSE PROJECT/
 │   ├── FSTSP-40-1-2.txt
 │   └── ...
 └── results/
+````
+
 Run the heuristic:
-
-bash
-Copiar código
+````bash
 python tabu_search.py
-During execution, each benchmark instance is solved using 3 independent Tabu Search runs, each one initialized with a different random seed.
-This means that, for every dataset:
+````
 
-The algorithm explores different regions of the solution space.
-
-Multiple feasible solutions are generated instead of a single one.
-
-The best, average, and variability of the results can be analyzed.
-
-The final reported results correspond to:
-
-The best solution found among the 3 runs.
-
-The average performance across the runs, used for comparison and evaluation.
+During execution, each benchmark instance is solved using 3 independent Tabu Search runs, each one initialized with a different random seed. This means that, for every dataset:
+- The algorithm explores different regions of the solution space.
+- Multiple feasible solutions are generated instead of a single one.
+- The best, average, and variability of the results can be analyzed.
+- The final reported results correspond to:
+-The best solution found among the 3 runs.
+-The average performance across the runs, used for comparison and evaluation.
 
 The script will automatically:
+1. Read all benchmark instances from the instances/ folder.
+2. Execute 3 Tabu Search runs per instance.
+3. Save plots and numerical results under the results/ directory.
+4.Create an additional results/report/ folder containing the figures and the summary CSV table used in the report.
 
-Read all benchmark instances from the instances/ folder.
-
-Execute 3 Tabu Search runs per instance.
-
-Save plots and numerical results under the results/ directory.
-
-Create an additional results/report/ folder containing the figures and the summary CSV table used in the report.
-
-2. Repository structure
-nginx
-Copiar código
+## 2. Repository structure
+````nginx
 COURSE PROJECT/
 │
 ├── tabu_search.py              # Main implementation of the Tabu Search heuristic
@@ -79,7 +68,9 @@ COURSE PROJECT/
 │       ├── ratio_vs_gurobi.png
 │       └── summary_table_report.csv
 └── README.md
-3. Algorithm overview
+````
+
+## 3. Algorithm overview
 Solution representation
 Solutions are encoded as permutations of customers. From each permutation, a base truck route is constructed and locally beneficial drone sorties are assigned using a greedy rule.
 
@@ -95,7 +86,7 @@ Each solution is evaluated using a detailed truck–drone simulation that enforc
 Metaheuristic
 A Tabu Search framework with a fixed tabu tenure and an aspiration criterion guides the exploration of the solution space.
 
-4. Experimental evaluation
+## 4. Experimental evaluation
 For each benchmark instance:
 
 The heuristic is executed 3 independent times with different random seeds.

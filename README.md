@@ -1,6 +1,6 @@
 # Flying Sidekick Traveling Salesperson Problem – Tabu Search
 
-This repository contains an implementation of a **Tabu Search heuristic** for the **Flying Sidekick Traveling Salesperson Problem (FSTSP)**, developed as part of the *Optimization Algorithms* course project.
+This repository contains an implementation of a **Tabu Search heuristic** for the **Flying Sidekick Traveling Salesperson Problem (FSTSP)**, developed as part of the *Optimization Algorithms* FSTSP-Tabu-Search-main.
 
 The algorithm coordinates a truck and a drone to serve a set of customers, aiming to minimize the total completion time while respecting endurance and synchronization constraints.
 
@@ -21,12 +21,19 @@ pip install matplotlib
 How to run
 Navigate to the project directory:
 ````bash
-cd "COURSE PROJECT"
+cd "FSTSP-Tabu-Search-main"
 ````
+
+Unzip the benchmark and results folders:
+````nginx
+unzip instances.zip
+unzip results.zip
+````
+
 Make sure the following directory structure is available:
 
 ````nginx
-COURSE PROJECT/
+FSTSP-Tabu-Search-main/
 │
 ├── tabu_search.py
 ├── instances/
@@ -57,7 +64,7 @@ The script will automatically:
 
 ## 2. Repository structure
 ````nginx
-COURSE PROJECT/
+FSTSP-Tabu-Search-main/
 │
 ├── tabu_search.py              # Main implementation of the Tabu Search heuristic
 ├── instances/                  # Benchmark instances (FSTSP-*.txt)
@@ -101,4 +108,4 @@ The code is self-contained and does not require external solvers.
 Antonio Miguel Mosquera Prudencio
 Miguel Estévez Díaz
 
-Optimization Algorithms – Course Project
+Optimization Algorithms – FSTSP-Tabu-Search-main

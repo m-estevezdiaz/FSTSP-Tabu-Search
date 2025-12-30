@@ -53,12 +53,12 @@ During execution, each benchmark instance is solved using 3 independent Tabu Sea
 - Multiple feasible solutions are generated instead of a single one.
 - The best, average, and variability of the results can be analyzed.
 - The final reported results correspond to:
--The best solution found among the 3 runs.
+-The best solution found among the 5 runs.
 -The average performance across the runs, used for comparison and evaluation.
 
 The script will automatically:
 1. Read all benchmark instances from the instances/ folder.
-2. Execute 3 Tabu Search runs per instance.
+2. Execute 5 Tabu Search runs per instance.
 3. Save plots and numerical results under the results/ directory.
 4. Create an additional results/report/ folder containing the figures and the summary CSV table used in the report.
 
@@ -90,7 +90,7 @@ Metaheuristic -> A Tabu Search framework with a fixed tabu tenure and an aspirat
 
 ## 4. Experimental evaluation
 For each benchmark instance:
-  - The heuristic is executed 3 independent times with different random seeds.
+  - The heuristic is executed 5 independent times with different random seeds.
   - Performance metrics include:
     - Best and average objective value
     - Runtime

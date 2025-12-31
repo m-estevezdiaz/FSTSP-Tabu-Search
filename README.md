@@ -105,7 +105,6 @@ All results reported in the accompanying PDF can be reproduced by running the sc
 The code is self-contained and does not require external solvers.
 
 ## 6. Authors
-Antonio Miguel Mosquera Prudencio
-Miguel Estévez Díaz
+Antonio Miguel Mosquera Prudencio & Miguel Estévez Díaz
 
 Optimization Algorithms – FSTSP-Tabu-Search-main

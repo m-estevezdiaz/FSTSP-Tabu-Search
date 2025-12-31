@@ -22,7 +22,7 @@ TIME_LIMIT_TS_RUN = 500
 N_RUNS_PER_INSTANCE = 5
 
 # ============================================================
-# Plot behavior (single window, no auto-close, no 30s pause)
+# Plot behavior (single window, no auto-close during run)
 # ============================================================
 
 PLOT_WINDOW_NUM = 1
@@ -364,7 +364,7 @@ def simulate_route(instance: FSTSPInstance, truck_route: List[int], sorties: Lis
         i = truck_route[edge_idx]
         j = truck_route[edge_idx + 1]
 
-        # Launch if needed
+        # Launch
         if edge_idx in launch_map:
             if drone_active:
                 return math.inf
@@ -374,7 +374,6 @@ def simulate_route(instance: FSTSPInstance, truck_route: List[int], sorties: Lis
             R_node = truck_route[srt.R_index]
             h = srt.h
 
-            # Consistency with route indices
             if L_node != i:
                 return math.inf
             if R_node != truck_route[srt.R_index]:
@@ -406,7 +405,7 @@ def simulate_route(instance: FSTSPInstance, truck_route: List[int], sorties: Lis
             return math.inf
         time_global += tij
 
-        # Recovery if needed
+        # Recovery
         if drone_active and (edge_idx + 1) in recovery_map:
             truck_arrival_R = time_global
 
@@ -445,10 +444,17 @@ def evaluate_perm(instance: FSTSPInstance, perm: List[int]) -> Tuple[float, List
 # Plot helpers (single window, refresh only)
 # ============================================================
 
+def _get_single_figure(figsize: Tuple[float, float]) -> plt.Figure:
+    plt.figure(num=PLOT_WINDOW_NUM)
+    plt.clf()
+    fig = plt.gcf()
+    fig.set_size_inches(figsize[0], figsize[1], forward=True)
+    return fig
+
+
 def _show_and_save(fig: plt.Figure, save_path: Optional[Path]) -> None:
     """
-    Save (optional) and update the same interactive window.
-    No blocking pause, no auto-close.
+    Save (optional) and refresh the same interactive window.
     """
     if save_path is not None:
         save_path.parent.mkdir(parents=True, exist_ok=True)
@@ -531,12 +537,10 @@ def plot_all_routes_subplots(
     cols = min(n_runs, 5)
     rows = math.ceil(n_runs / cols)
 
-    fig, axes = plt.subplots(
-        rows, cols,
-        num=PLOT_WINDOW_NUM,
-        clear=True,
-        figsize=(4 * cols, 4 * rows)
-    )
+    FIXED_WIDTH = 8.0         
+    ROW_HEIGHT  = 4.0          
+    fig = _get_single_figure((FIXED_WIDTH, ROW_HEIGHT * rows))
+    axes = plt.subplots(rows, cols, num=PLOT_WINDOW_NUM)[1]
 
     if rows == 1 and cols == 1:
         axes = [[axes]]
@@ -585,7 +589,9 @@ def plot_run_costs_bars(
     """
     x_pos = list(range(len(run_numbers)))
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(8, 4))
+    fig = _get_single_figure((8, 4))
+    ax = fig.add_subplot(111)
+
     ax.bar(x_pos, costs)
     ax.set_ylabel("Cost")
     ax.set_title(f"Costs per run - {instance_name}")
@@ -609,7 +615,9 @@ def plot_run_times_bars(
     """
     x_pos = list(range(len(run_numbers)))
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(8, 4))
+    fig = _get_single_figure((8, 4))
+    ax = fig.add_subplot(111)
+
     ax.bar(x_pos, times)
     ax.set_ylabel("Runtime (s)")
     ax.set_title(f"Runtimes per run - {instance_name}")
@@ -633,7 +641,9 @@ def plot_run_expansions_bars(
     """
     x_pos = list(range(len(run_numbers)))
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(8, 4))
+    fig = _get_single_figure((8, 4))
+    ax = fig.add_subplot(111)
+
     ax.bar(x_pos, expansions)
     ax.set_ylabel("Expansions")
     ax.set_title(f"Expansions per run - {instance_name}")
@@ -662,7 +672,9 @@ def plot_run_customers_bars(
     x_pos = list(range(len(run_numbers)))
     width = 0.35
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(8, 4))
+    fig = _get_single_figure((8, 4))
+    ax = fig.add_subplot(111)
+
     ax.bar([x - width / 2 for x in x_pos], truck_customers, width=width, label="Truck customers")
     ax.bar([x + width / 2 for x in x_pos], drone_customers, width=width, label="Drone customers")
 
@@ -693,7 +705,9 @@ def plot_gaps_per_instance(
     x_pos = list(range(len(instance_keys)))
     width = 0.35
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(10, 5))
+    fig = _get_single_figure((10, 5))
+    ax = fig.add_subplot(111)
+
     ax.bar([x - width / 2 for x in x_pos], gaps_best, width=width, label="GAP(best)")
     ax.bar([x + width / 2 for x in x_pos], gaps_avg, width=width, label="GAP(avg)")
     ax.axhline(0.0, color="black", linewidth=1.0)
@@ -722,7 +736,9 @@ def plot_ratio_best_per_instance(
 
     x_pos = list(range(len(instance_keys)))
 
-    fig, ax = plt.subplots(num=PLOT_WINDOW_NUM, clear=True, figsize=(10, 5))
+    fig = _get_single_figure((10, 5))
+    ax = fig.add_subplot(111)
+
     ax.bar(x_pos, ratios_best)
     ax.axhline(1.0, color="red", linestyle="--", linewidth=1.5, label="Optimal ratio = 1.0")
 
@@ -861,8 +877,13 @@ def run_all_instances(n_runs_per_instance: int = N_RUNS_PER_INSTANCE) -> None:
     At the end:
       - save global plots into results/report
       - save a summary CSV into results/report
+      - print total execution time
+      - close plot window
     """
     plt.ion()  # interactive mode for single-window updating
+
+    # Total execution timer
+    total_start_time = time.time()
 
     try:
         base_dir = Path(__file__).resolve().parent
@@ -879,6 +900,8 @@ def run_all_instances(n_runs_per_instance: int = N_RUNS_PER_INSTANCE) -> None:
     txt_files = sorted(instances_dir.glob("FSTSP-*.txt"))
     if not txt_files:
         print(f"No instances found in {instances_dir}")
+        plt.ioff()
+        plt.close("all")
         return
 
     # Global lists for report plots
@@ -918,8 +941,7 @@ def run_all_instances(n_runs_per_instance: int = N_RUNS_PER_INSTANCE) -> None:
 
             t0_run = time.time()
             cost, perm, truck_route, sorties, expansions = tabu_search(instance)
-            t1_run = time.time()
-            runtime_run = t1_run - t0_run
+            runtime_run = time.time() - t0_run
 
             all_costs.append(cost)
             run_times.append(runtime_run)
@@ -1116,9 +1138,16 @@ def run_all_instances(n_runs_per_instance: int = N_RUNS_PER_INSTANCE) -> None:
 
         print(f"Summary table for report saved to: {table_path}")
 
-    # Keep the last plot window open (optional)
+    # Total execution time
+    total_elapsed = time.time() - total_start_time
+    total_minutes = int(total_elapsed // 60)
+    total_seconds = int(total_elapsed % 60)
+    print(f"\nTOTAL EXECUTION TIME: {total_minutes} min {total_seconds} s\n")
+
+    # Close plot window at the end
     plt.ioff()
-    plt.show()
+    plt.pause(2)
+    plt.close("all")
 
 
 if __name__ == "__main__":
